@@ -1,0 +1,411 @@
+/* =========================================================================
+   Refúgio — Sistema de Design (base responsiva e acessível)
+   -------------------------------------------------------------------------
+   Folha de estilo base compartilhada pelas quatro telas (Início, Mapa,
+   Ocorrência, Pedir ajuda). Define os tokens do Sistema de Design, o reset
+   de base, componentes reutilizáveis (botão pílula, card, alerta), o layout
+   fluido de 320px a 1920px, a base de acessibilidade (foco visível,
+   navegação por teclado, utilitário para texto alternativo) e o bloco de
+   aviso de navegadores compatíveis.
+
+   Rastreabilidade: R10.3, R10.6, R10.7, R10.8, R14.2, R14.3, R14.4, R14.6,
+   R14.7.
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   1. Tokens do Sistema de Design (R14.2, R14.3, R14.4, R14.6, R14.7)
+   Cores, tipografia, raios de borda e alvo de toque mínimo expostos como
+   custom properties para reutilização consistente em todas as telas.
+   ------------------------------------------------------------------------- */
+:root {
+  /* Cores de interface (R14.2) */
+  --cor-acao: #c9291c;        /* Cor primária de ação */
+  --cor-fundo: #efefec;       /* Fundo de tela */
+  --cor-superficie: #dededb;  /* Superfícies (cards) */
+  --cor-alerta: #f6d9a6;      /* Cor de alerta */
+  --cor-verde: #9dc48c;       /* Verde do Sistema de Design */
+
+  /* Cores de gravidade (R14.7) — baixo→amarelo, médio→laranja, alto→vermelho */
+  --cor-amarelo: #f2c94c;     /* Gravidade baixa */
+  --cor-laranja: #e8a028;     /* Gravidade média */
+  --cor-vermelho: #c9291c;    /* Gravidade alta (igual à cor de ação) */
+
+  /* Cores de texto derivadas */
+  --cor-texto: #1f1f1d;       /* Texto principal sobre fundos claros */
+  --cor-texto-suave: #55554f; /* Texto secundário / legendas */
+  --cor-texto-inverso: #ffffff; /* Texto sobre superfícies escuras/ação */
+
+  /* Tipografia (R14.3) */
+  --fonte-base: "Helvetica Neue", Arial, sans-serif;
+
+  /* Raios de borda (R14.4) */
+  --raio-botao: 99px;  /* Botão em formato de pílula */
+  --raio-card: 24px;   /* Card: entre 22px e 28px */
+
+  /* Alvo de toque mínimo (R14.6) */
+  --alvo-toque: 44px;
+
+  /* Espaçamentos e layout fluido (R10.3) */
+  --largura-maxima: 1200px;
+  --espaco-xs: 0.5rem;
+  --espaco-sm: 0.75rem;
+  --espaco-md: 1rem;
+  --espaco-lg: 1.5rem;
+  --espaco-xl: 2rem;
+
+  /* Preenchimento lateral fluido do container: acompanha a largura da tela,
+     entre 16px (320px) e 32px (telas largas). */
+  --padding-container: clamp(16px, 4vw, 32px);
+
+  /* Foco visível (R10.7) */
+  --cor-foco: #0b63c4;
+  --largura-foco: 3px;
+}
+
+/* -------------------------------------------------------------------------
+   2. Reset / base
+   Normaliza margens, box model e tipografia; aplica o fundo de tela e a
+   família de fontes padrão em todo o documento.
+   ------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* Escala tipográfica responsiva suave entre telas pequenas e grandes. */
+  font-size: clamp(16px, 0.95rem + 0.2vw, 18px);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: var(--fonte-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+picture,
+svg,
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: 1.2;
+  margin: 0 0 var(--espaco-sm);
+}
+
+p {
+  margin: 0 0 var(--espaco-md);
+}
+
+a {
+  color: var(--cor-acao);
+}
+
+/* Herança de fonte para controles de formulário. */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* Respeita a preferência de redução de movimento. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   3. Layout fluido (R10.3)
+   Container central com largura máxima e preenchimento lateral fluido,
+   garantindo adaptação contínua de 320px a 1920px.
+   ------------------------------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: var(--largura-maxima);
+  margin-inline: auto;
+  padding-inline: var(--padding-container);
+}
+
+/* Grade fluida simples e auto-responsiva (sem media queries explícitas):
+   as colunas se ajustam ao espaço disponível entre 320px e 1920px. */
+.grade {
+  display: grid;
+  gap: var(--espaco-md);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+}
+
+/* Em telas muito largas, amplia o respiro lateral do container. */
+@media (min-width: 1440px) {
+  :root {
+    --largura-maxima: 1320px;
+  }
+}
+
+/* Em telas estreitas (smartphones), reduz espaçamentos verticais. */
+@media (max-width: 480px) {
+  :root {
+    --espaco-xl: 1.5rem;
+    --espaco-lg: 1.25rem;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   4. Acessibilidade — base (R10.6, R10.7)
+   Foco visível para navegação por teclado e utilitário de texto
+   visualmente oculto (para rótulos/texto alternativo auxiliares).
+   ------------------------------------------------------------------------- */
+
+/* Foco visível consistente para todo elemento interativo alcançado por
+   teclado (R10.7). Usa :focus-visible para não poluir o foco por mouse. */
+:focus-visible {
+  outline: var(--largura-foco) solid var(--cor-foco);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Fallback para navegadores sem suporte a :focus-visible: mantém o foco
+   visível mesmo assim, preservando a navegação por teclado. */
+:focus {
+  outline: var(--largura-foco) solid var(--cor-foco);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Conteúdo visualmente oculto, porém acessível a leitores de tela.
+   Útil para rótulos e descrições (texto alternativo auxiliar, R10.6). */
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Link "pular para o conteúdo": oculto até receber foco por teclado. */
+.pular-conteudo {
+  position: absolute;
+  left: var(--espaco-sm);
+  top: -999px;
+  z-index: 1000;
+  padding: var(--espaco-xs) var(--espaco-md);
+  background: var(--cor-acao);
+  color: var(--cor-texto-inverso);
+  border-radius: var(--raio-botao);
+  text-decoration: none;
+}
+
+.pular-conteudo:focus {
+  top: var(--espaco-sm);
+}
+
+/* -------------------------------------------------------------------------
+   5. Componentes reutilizáveis
+   ------------------------------------------------------------------------- */
+
+/* 5.1 Botão em formato de pílula (R14.4, R14.6)
+   border-radius 99px e altura mínima de 44px (alvo de toque). */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaco-xs);
+  min-height: var(--alvo-toque);
+  min-width: var(--alvo-toque);
+  padding: 0 var(--espaco-lg);
+  border: 2px solid transparent;
+  border-radius: var(--raio-botao);
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.08s ease, filter 0.12s ease;
+}
+
+.botao:hover {
+  filter: brightness(0.96);
+}
+
+.botao:active {
+  transform: translateY(1px);
+}
+
+.botao:disabled,
+.botao[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Variante primária: usa a cor de ação (R14.2). */
+.botao--primario {
+  background: var(--cor-acao);
+  color: var(--cor-texto-inverso);
+}
+
+/* Variante secundária: contorno sobre fundo claro. */
+.botao--secundario {
+  background: transparent;
+  border-color: var(--cor-acao);
+  color: var(--cor-acao);
+}
+
+/* Variante com a cor verde do Sistema de Design. */
+.botao--verde {
+  background: var(--cor-verde);
+  color: var(--cor-texto);
+}
+
+/* Botão que ocupa toda a largura disponível (útil em telas estreitas). */
+.botao--bloco {
+  display: flex;
+  width: 100%;
+}
+
+/* 5.2 Card (R14.4)
+   Superfície com raio de borda entre 22px e 28px e fundo de superfície. */
+.card {
+  background: var(--cor-superficie);
+  border-radius: var(--raio-card);
+  padding: var(--espaco-lg);
+}
+
+/* 5.3 Alerta (R14.2)
+   Bloco de destaque com a cor de alerta do Sistema de Design. */
+.alerta {
+  background: var(--cor-alerta);
+  border-radius: var(--raio-card);
+  padding: var(--espaco-lg);
+  color: var(--cor-texto);
+}
+
+/* Campos de formulário acessíveis, com alvo de toque mínimo de 44px. */
+.campo {
+  display: block;
+  width: 100%;
+  min-height: var(--alvo-toque);
+  padding: var(--espaco-sm) var(--espaco-md);
+  border: 2px solid var(--cor-superficie);
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.campo:focus-visible {
+  border-color: var(--cor-foco);
+}
+
+textarea.campo {
+  min-height: calc(var(--alvo-toque) * 2);
+  resize: vertical;
+}
+
+/* Rótulo de formulário. */
+.rotulo {
+  display: block;
+  margin-bottom: var(--espaco-xs);
+  font-weight: 600;
+}
+
+/* -------------------------------------------------------------------------
+   6. Cores de gravidade e legenda (R12.5, R14.7)
+   Utilitários reutilizáveis mapeando o Nível_de_Gravidade à Cor_de_Gravidade.
+   Reutilizados pela tela Mapa (marcadores e legenda de cores).
+   baixo → amarelo | médio → laranja (#E8A028) | alto → vermelho (#C9291C)
+   ------------------------------------------------------------------------- */
+
+/* Preenchimento de fundo por nível (ex.: selos, pastilhas, marcadores). */
+.gravidade-baixo { background-color: var(--cor-amarelo); color: var(--cor-texto); }
+.gravidade-medio { background-color: var(--cor-laranja); color: var(--cor-texto); }
+.gravidade-alto  { background-color: var(--cor-vermelho); color: var(--cor-texto-inverso); }
+
+/* Cor de texto por nível (ex.: ícones, rótulos). */
+.texto-gravidade-baixo { color: var(--cor-amarelo); }
+.texto-gravidade-medio { color: var(--cor-laranja); }
+.texto-gravidade-alto  { color: var(--cor-vermelho); }
+
+/* Legenda de cores de gravidade (R12.5) — pronta para a tela Mapa. */
+.legenda-gravidade {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-md);
+  margin: 0;
+  padding: var(--espaco-md);
+  list-style: none;
+  background: var(--cor-superficie);
+  border-radius: var(--raio-card);
+}
+
+.legenda-gravidade li {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-xs);
+}
+
+/* Amostra de cor circular usada na legenda. */
+.legenda-amostra {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+/* -------------------------------------------------------------------------
+   7. Aviso de navegadores compatíveis (R10.8)
+   Bloco que as telas podem exibir quando um recurso necessário não é
+   suportado pelo Navegador_Web do Cidadão, informando os navegadores
+   compatíveis (Chrome, Firefox, Edge, Safari).
+   ------------------------------------------------------------------------- */
+.aviso-navegador {
+  background: var(--cor-alerta);
+  border: 2px solid var(--cor-laranja);
+  border-radius: var(--raio-card);
+  padding: var(--espaco-lg);
+  margin-block: var(--espaco-md);
+  color: var(--cor-texto);
+}
+
+.aviso-navegador h2,
+.aviso-navegador p {
+  margin-top: 0;
+}
+
+.aviso-navegador ul {
+  margin: var(--espaco-xs) 0 0;
+  padding-left: 1.25rem;
+}

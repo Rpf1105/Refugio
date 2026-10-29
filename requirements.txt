@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+pydantic
+hypothesis
+pytest
+httpx
+apscheduler
+python-multipart
