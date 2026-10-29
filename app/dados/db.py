@@ -52,10 +52,19 @@ def conectar(caminho: Optional[str] = None) -> sqlite3.Connection:
         ``config.CAMINHO_BANCO`` (padrão ``/data/refugio.db``).
     :returns: Conexão com ``row_factory = sqlite3.Row`` e ``PRAGMA
         foreign_keys = ON``.
+
+    .. note::
+        ``check_same_thread=False`` é necessário porque o FastAPI executa os
+        endpoints síncronos em um *threadpool*: a conexão criada pela dependência
+        ``get_conn`` pode ser usada em uma thread diferente daquela que a abriu.
+        Cada requisição continua recebendo sua própria conexão (aberta e fechada
+        dentro da requisição via ``get_conn``); o parâmetro apenas relaxa a
+        verificação de afinidade de thread do SQLite, sem compartilhar conexões
+        entre requisições.
     """
     destino = caminho if caminho is not None else config.CAMINHO_BANCO
     _garantir_diretorio(destino)
-    conexao = sqlite3.connect(destino)
+    conexao = sqlite3.connect(destino, check_same_thread=False)
     conexao.row_factory = sqlite3.Row
     conexao.execute("PRAGMA foreign_keys = ON")
     return conexao

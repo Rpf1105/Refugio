@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Refúgio — Mapa</title>
+
+    <!--
+      Tela Mapa do Refúgio (tarefa 12.3).
+
+      Integra Leaflet + OpenStreetMap para desenhar, sobre o Município
+      selecionado, as camadas consumidas da API (/api/*):
+        - Áreas Afetadas (polígonos coloridos por gravidade)  R1.1, R1.2, R12.x
+        - Abrigos (marcadores com nome/endereço/capacidade)   R2.1, R2.2
+        - Relatos (marcadores coloridos por nível + foto)      R5.1, R5.2, R5.3
+        - Incidentes (cor por gravidade média + veracidade)   R9.6, R12.4
+        - Incidentes Externos (procedência Portal de Dados)   R15.3
+
+      Botões-pílula (.botao) filtram as camadas; um card (.card) mostra o
+      detalhe do elemento selecionado; a legenda (.legenda-gravidade) mapeia
+      cada Cor_de_Gravidade ao Nível_de_Gravidade (R12.1–R12.3, R12.5).
+
+      Acessibilidade (R10.6, R10.7): rótulos/aria em elementos não textuais,
+      navegação por teclado via componentes nativos, foco visível herdado do
+      Sistema de Design. O aviso .aviso-navegador é exibido quando os tiles do
+      mapa não carregam (recurso necessário indisponível, R10.8).
+    -->
+
+    <link rel="stylesheet" href="/static/css/estilo.css" />
+
+    <!-- Leaflet (CSS + JS) via CDN. integrity/crossorigin conforme distribuição oficial. -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+
+    <style>
+      /* ---------------------------------------------------------------
+         Estilos específicos da tela Mapa.
+         Usam os tokens do Sistema de Design (var(--...)) definidos em
+         estilo.css para manter a consistência visual (R14.2–R14.7).
+         --------------------------------------------------------------- */
+
+      .mapa-layout {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .mapa-cabecalho {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: var(--espaco-xs) var(--espaco-md);
+        padding: var(--espaco-md) var(--padding-container);
+      }
+
+      .mapa-cabecalho h1 {
+        margin: 0;
+        color: var(--cor-acao);
+        font-size: 1.5rem;
+      }
+
+      .mapa-cabecalho .mapa-municipio {
+        color: var(--cor-texto-suave);
+        font-weight: 600;
+      }
+
+      /* Barra de filtros: botões-pílula roláveis horizontalmente em telas
+         estreitas, sem quebrar o alvo de toque de 44px. */
+      .mapa-filtros {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--espaco-sm);
+        padding: 0 var(--padding-container) var(--espaco-sm);
+      }
+
+      /* Estado "camada ativa" do botão-pílula de filtro. */
+      .botao[aria-pressed="true"] {
+        background: var(--cor-acao);
+        color: var(--cor-texto-inverso);
+      }
+
+      /* Área principal: mapa + painel lateral de detalhe/legenda.
+         Em telas largas, duas colunas; em telas estreitas, empilha. */
+      .mapa-principal {
+        display: grid;
+        gap: var(--espaco-md);
+        grid-template-columns: 1fr;
+        padding: 0 var(--padding-container) var(--espaco-lg);
+        flex: 1;
+      }
+
+      @media (min-width: 900px) {
+        .mapa-principal {
+          grid-template-columns: minmax(0, 1fr) 320px;
+          align-items: start;
+        }
+      }
+
+      /* Contêiner do mapa Leaflet. Altura responsiva, sempre visível. */
+      #mapa {
+        width: 100%;
+        height: clamp(360px, 60vh, 720px);
+        border-radius: var(--raio-card);
+        background: var(--cor-superficie);
+        z-index: 0;
+      }
+
+      .mapa-lateral {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espaco-md);
+      }
+
+      /* Card de detalhe do elemento selecionado (R12 — exibe gravidade etc.). */
+      #detalhe .detalhe-vazio {
+        color: var(--cor-texto-suave);
+        margin: 0;
+      }
+
+      #detalhe h2 {
+        margin-top: 0;
+        font-size: 1.15rem;
+      }
+
+      #detalhe dl {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: var(--espaco-xs) var(--espaco-sm);
+        margin: 0;
+      }
+
+      #detalhe dt {
+        font-weight: 600;
+        color: var(--cor-texto-suave);
+      }
+
+      #detalhe dd {
+        margin: 0;
+      }
+
+      #detalhe img {
+        margin-top: var(--espaco-sm);
+        border-radius: 14px;
+      }
+
+      /* Pastilha (selo) de gravidade/veracidade reutilizando as cores. */
+      .pastilha {
+        display: inline-block;
+        padding: 0.1rem 0.6rem;
+        border-radius: 99px;
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+
+      /* Selo de procedência externa (R15.3) — visual distinto dos locais. */
+      .selo-externo {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.1rem 0.6rem;
+        border-radius: 99px;
+        background: #6b7a8f;
+        color: var(--cor-texto-inverso);
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      .legenda-titulo {
+        margin: 0 0 var(--espaco-xs);
+        font-size: 1rem;
+      }
+
+      /* Mensagem de ausência de dados (R1.3, R2.3) e mensagens de status. */
+      .mapa-mensagem {
+        margin: 0;
+        color: var(--cor-texto-suave);
+        font-size: 0.9rem;
+      }
+
+      /* Marcadores circulares coloridos desenhados como divIcon do Leaflet. */
+      .marcador-ponto {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 2px solid #ffffff;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+      }
+    </style>
+  </head>
+
+  <body>
+    <a class="pular-conteudo" href="#mapa">Pular para o mapa</a>
+
+    <div class="mapa-layout">
+      <header class="mapa-cabecalho">
+        <h1>Refúgio</h1>
+        <span class="mapa-municipio" id="rotulo-municipio" aria-live="polite">
+          Carregando município…
+        </span>
+      </header>
+
+      <!--
+        Aviso de recurso de navegador indisponível (R10.8). Fica oculto por
+        padrão e é exibido quando os tiles do mapa não carregam (ex.: sem
+        suporte/rede), informando os Navegadores_Web compatíveis.
+      -->
+      <div
+        class="aviso-navegador container"
+        id="aviso-tiles"
+        role="alert"
+        hidden
+      >
+        <h2>Não foi possível carregar o mapa</h2>
+        <p>
+          Os blocos (tiles) do mapa não puderam ser carregados. Verifique a sua
+          conexão com a internet. Caso o problema persista, use a versão estável
+          mais recente de um dos navegadores compatíveis:
+        </p>
+        <ul>
+          <li>Google Chrome</li>
+          <li>Mozilla Firefox</li>
+          <li>Microsoft Edge</li>
+          <li>Safari</li>
+        </ul>
+      </div>
+
+      <main class="mapa-principal" id="conteudo">
+        <section aria-labelledby="titulo-mapa-regiao">
+          <h2 id="titulo-mapa-regiao" class="sr-only">Mapa da região</h2>
+
+          <!-- Filtros de camada (botões-pílula). aria-pressed reflete ativo. -->
+          <nav class="mapa-filtros" aria-label="Filtros de camadas do mapa">
+            <button
+              type="button"
+              class="botao"
+              data-camada="areas"
+              aria-pressed="true"
+            >
+              Áreas afetadas
+            </button>
+            <button
+              type="button"
+              class="botao"
+              data-camada="abrigos"
+              aria-pressed="true"
+            >
+              Abrigos
+            </button>
+            <button
+              type="button"
+              class="botao"
+              data-camada="relatos"
+              aria-pressed="true"
+            >
+              Reportes da comunidade
+            </button>
+            <button
+              type="button"
+              class="botao"
+              data-camada="incidentes"
+              aria-pressed="true"
+            >
+              Incidentes
+            </button>
+            <button
+              type="button"
+              class="botao"
+              data-camada="externos"
+              aria-pressed="true"
+            >
+              Incidentes externos
+            </button>
+          </nav>
+
+          <!-- Filtro de gravidade dos Relatos (R5.3): re-consulta /api/relatos. -->
+          <div class="mapa-filtros" role="group" aria-label="Filtrar reportes por gravidade">
+            <label class="rotulo sr-only" for="filtro-gravidade">
+              Gravidade dos reportes
+            </label>
+            <select class="campo" id="filtro-gravidade" style="max-width: 16rem">
+              <option value="">Todas as gravidades</option>
+              <option value="baixo">Baixa</option>
+              <option value="medio">Média</option>
+              <option value="alto">Alta</option>
+            </select>
+          </div>
+
+          <div id="mapa" role="application" aria-label="Mapa interativo da região com áreas, abrigos e reportes"></div>
+        </section>
+
+        <aside class="mapa-lateral" aria-label="Detalhes e legenda">
+          <!-- Card de detalhe do elemento selecionado no mapa. -->
+          <section class="card" id="detalhe" aria-live="polite">
+            <h2>Detalhe</h2>
+            <p class="detalhe-vazio">
+              Selecione um elemento no mapa para ver os detalhes.
+            </p>
+          </section>
+
+          <!-- Legenda de cores de gravidade (R12.5). -->
+          <section class="card" aria-labelledby="legenda-titulo">
+            <h2 class="legenda-titulo" id="legenda-titulo">
+              Legenda de gravidade
+            </h2>
+            <ul class="legenda-gravidade">
+              <li>
+                <span
+                  class="legenda-amostra gravidade-baixo"
+                  role="img"
+                  aria-label="Cor amarela"
+                ></span>
+                Baixa
+              </li>
+              <li>
+                <span
+                  class="legenda-amostra gravidade-medio"
+                  role="img"
+                  aria-label="Cor laranja"
+                ></span>
+                Média
+              </li>
+              <li>
+                <span
+                  class="legenda-amostra gravidade-alto"
+                  role="img"
+                  aria-label="Cor vermelha"
+                ></span>
+                Alta
+              </li>
+              <li>
+                <span
+                  class="legenda-amostra"
+                  role="img"
+                  aria-label="Cor azul-acinzentada"
+                  style="background-color: #6b7a8f"
+                ></span>
+                Externo (fonte oficial)
+              </li>
+            </ul>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <!-- Leaflet JS via CDN; carregado antes do script da tela. -->
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="/static/js/mapa.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Nome exibido do Aplicativo (R14.5). -->
+    <title>Refúgio — Ocorrência</title>
+    <!-- Sistema de Design compartilhado (R14.2–R14.7). -->
+    <link rel="stylesheet" href="/static/css/estilo.css" />
+  </head>
+  <body>
+    <!--
+      Tela Ocorrência (R14.1):
+      - Seção de exibição de Relatos (R5.2): cada Relato traz selo de status
+        (validado) com cor de gravidade, descrição, foto (com texto alternativo)
+        e um contador de confirmações.
+      - Formulário de envio de Relato (R4.1): descrição, seletor de gravidade
+        (baixo/medio/alto) e foto OBRIGATÓRIA; região aria-live exibe a
+        confirmação de recebimento (R4.6) ou o erro retornado pela API.
+      Elementos não textuais recebem texto alternativo / rótulos (R10.6).
+    -->
+    <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+    <main id="conteudo" class="container" style="padding-block: var(--espaco-lg); display: flex; flex-direction: column; gap: var(--espaco-lg);">
+      <header>
+        <p style="margin: 0; color: var(--cor-texto-suave); font-weight: 600;">Refúgio</p>
+        <h1 style="color: var(--cor-acao); font-size: clamp(2rem, 7vw, 2.75rem); margin: 0;">Ocorrência</h1>
+      </header>
+
+      <!-- Formulário de envio de Relato (R4.1–R4.6). -->
+      <section aria-labelledby="titulo-form" class="card">
+        <h2 id="titulo-form" style="margin-top: 0;">Avisar um problema</h2>
+
+        <form id="form-relato" novalidate>
+          <div style="margin-bottom: var(--espaco-md);">
+            <label class="rotulo" for="descricao">Descrição do que está acontecendo</label>
+            <textarea
+              class="campo"
+              id="descricao"
+              name="descricao"
+              required
+              aria-required="true"
+              placeholder="Ex.: Rua alagada, água na altura do joelho."
+            ></textarea>
+          </div>
+
+          <div style="margin-bottom: var(--espaco-md);">
+            <label class="rotulo" for="nivel_gravidade">Gravidade</label>
+            <select class="campo" id="nivel_gravidade" name="nivel_gravidade" required aria-required="true">
+              <option value="baixo">Baixo</option>
+              <option value="medio" selected>Médio</option>
+              <option value="alto">Alto</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom: var(--espaco-md);">
+            <label class="rotulo" for="foto">Foto (obrigatória)</label>
+            <input
+              class="campo"
+              id="foto"
+              name="foto"
+              type="file"
+              accept="image/*"
+              required
+              aria-required="true"
+            />
+            <p style="margin: var(--espaco-xs) 0 0; color: var(--cor-texto-suave); font-size: 0.9rem;">
+              Uma foto ajuda os órgãos responsáveis a confirmar a ocorrência.
+            </p>
+          </div>
+
+          <button type="submit" class="botao botao--primario botao--bloco" style="min-height: var(--alvo-toque);">
+            Enviar relato
+          </button>
+
+          <!--
+            Região de status com aria-live: anuncia a confirmação de
+            recebimento (R4.6) ou a mensagem de erro retornada pela API.
+          -->
+          <p
+            id="mensagem-envio"
+            role="status"
+            aria-live="polite"
+            style="margin: var(--espaco-md) 0 0; min-height: 1.5rem; font-weight: 600;"
+          ></p>
+        </form>
+      </section>
+
+      <!-- Lista de Relatos existentes (R5.2). -->
+      <section aria-labelledby="titulo-lista" style="display: flex; flex-direction: column; gap: var(--espaco-md);">
+        <h2 id="titulo-lista" style="margin: 0;">Relatos da região</h2>
+
+        <!-- Mensagem de status do carregamento da lista (aria-live). -->
+        <p id="status-relatos" role="status" aria-live="polite" style="margin: 0; color: var(--cor-texto-suave);">
+          Carregando relatos…
+        </p>
+
+        <!-- Container preenchido dinamicamente por ocorrencia.js. -->
+        <div id="lista-relatos" style="display: flex; flex-direction: column; gap: var(--espaco-md);"></div>
+      </section>
+    </main>
+
+    <!--
+      Modelo (template) de um card de Relato. O JS clona este nó para cada
+      Relato, mantendo a marcação acessível em um único lugar.
+    -->
+    <template id="modelo-relato">
+      <article class="card" style="background: #f4f4f2;">
+        <div style="display: flex; gap: var(--espaco-sm); align-items: center; flex-wrap: wrap;">
+          <!-- Selo de status/validação com cor de gravidade (R6.3, R12.*). -->
+          <span
+            class="selo-status"
+            style="border-radius: var(--raio-botao); padding: 4px 12px; font-size: 0.8rem; font-weight: 700;"
+          ></span>
+          <span class="selo-tempo" style="font-size: 0.85rem; color: var(--cor-texto-suave);"></span>
+        </div>
+
+        <p class="relato-descricao" style="font-size: 1.05rem; font-weight: 600; margin: var(--espaco-sm) 0;"></p>
+
+        <!-- Foto do Relato com texto alternativo descritivo (R10.6). -->
+        <img
+          class="relato-foto"
+          alt=""
+          style="width: 100%; max-height: 240px; object-fit: cover; border-radius: 14px; background: var(--cor-superficie);"
+        />
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: var(--espaco-md);">
+          <span class="relato-confirmacoes" style="font-weight: 700; color: var(--cor-acao);"></span>
+          <button type="button" class="botao" style="min-height: var(--alvo-toque);">Confirmo</button>
+        </div>
+      </article>
+    </template>
+
+    <script src="/static/js/ocorrencia.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Nome exibido do Aplicativo (R14.5). -->
+    <title>Refúgio — Início</title>
+    <!-- Sistema de Design compartilhado (R14.2–R14.7). -->
+    <link rel="stylesheet" href="/static/css/estilo.css" />
+  </head>
+  <body>
+    <!--
+      Tela Início (R14.1): título "Refúgio" (R14.5), card de alerta na cor de
+      alerta #F6D9A6 (R14.2 via .alerta), botão primário em pílula e atalhos de
+      navegação. Todos os elementos não textuais (ícones, decorações) recebem
+      texto alternativo / rótulos acessíveis (R10.6).
+    -->
+    <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+    <main id="conteudo" class="container" style="padding-block: var(--espaco-lg); display: flex; flex-direction: column; gap: var(--espaco-lg);">
+      <!-- Cabeçalho com o nome do Aplicativo (R14.5). -->
+      <header>
+        <h1 style="color: var(--cor-acao); font-size: clamp(2.5rem, 8vw, 3.25rem); letter-spacing: -1px; margin: 0;">
+          Refúgio
+        </h1>
+        <p class="sr-only">Aplicativo de resposta a emergências. Tela inicial.</p>
+      </header>
+
+      <!-- Card de alerta na cor de alerta #F6D9A6 (R14.2). -->
+      <section
+        class="alerta"
+        role="alert"
+        aria-labelledby="titulo-alerta"
+        style="display: flex; align-items: center; gap: var(--espaco-md);"
+      >
+        <!-- Ícone decorativo: oculto de leitores de tela (texto equivalente no conteúdo). -->
+        <svg
+          width="38"
+          height="38"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          focusable="false"
+          style="flex: none;"
+        >
+          <path d="M12 3 2 20h20L12 3zM12 10v5M12 18v.01"></path>
+        </svg>
+        <div>
+          <h2 id="titulo-alerta" style="margin: 0; font-size: 1.1rem;">Alerta de emergência</h2>
+          <p style="margin: var(--espaco-xs) 0 0; font-weight: 600;">
+            Risco de alagamento na sua região. Fique atento às orientações da Defesa Civil.
+          </p>
+        </div>
+      </section>
+
+      <!-- Ações principais e atalhos. -->
+      <nav aria-label="Ações rápidas" style="display: flex; flex-direction: column; gap: var(--espaco-md);">
+        <!-- Botão primário em pílula (R14.4). -->
+        <a
+          class="botao botao--primario botao--bloco"
+          href="/pedir-ajuda"
+          style="min-height: 72px; font-size: 1.25rem; gap: var(--espaco-sm);"
+        >
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <rect x="9" y="3" width="6" height="11" rx="3"></rect>
+            <path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path>
+          </svg>
+          Falar e pedir ajuda
+        </a>
+
+        <!-- Atalho: Avisar um problema → tela Ocorrência. -->
+        <a
+          class="botao botao--bloco"
+          href="/ocorrencia"
+          style="min-height: 64px; justify-content: flex-start; gap: var(--espaco-md); font-size: 1.1rem;"
+        >
+          <svg
+            width="30"
+            height="30"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--cor-acao)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            focusable="false"
+            style="flex: none;"
+          >
+            <path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11zM12 7v4M12 13.5v.01"></path>
+          </svg>
+          <span style="flex: 1; text-align: left;">Avisar um problema</span>
+          <span aria-hidden="true" style="color: var(--cor-texto-suave);">›</span>
+        </a>
+
+        <!-- Atalho: Abrigos perto de mim → tela Mapa. -->
+        <a
+          class="botao botao--bloco"
+          href="/mapa"
+          style="min-height: 64px; justify-content: flex-start; gap: var(--espaco-md); font-size: 1.1rem;"
+        >
+          <svg
+            width="30"
+            height="30"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--cor-acao)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            focusable="false"
+            style="flex: none;"
+          >
+            <path d="M3 11 12 3l9 8M5 9.5V21h14V9.5M10 21v-6h4v6"></path>
+          </svg>
+          <span style="flex: 1; text-align: left;">Abrigos perto de mim</span>
+          <span aria-hidden="true" style="color: var(--cor-texto-suave);">›</span>
+        </a>
+
+        <!-- Atalhos secundários lado a lado. -->
+        <div class="grade" style="grid-template-columns: repeat(2, 1fr);">
+          <button
+            type="button"
+            class="botao"
+            style="min-height: 96px; flex-direction: column; gap: var(--espaco-xs); font-size: 1rem;"
+          >
+            <svg
+              width="34"
+              height="34"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--cor-acao)"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11z"></path>
+            </svg>
+            Avisar família
+          </button>
+
+          <!-- Ligação de emergência 193 (bombeiros). -->
+          <a
+            class="botao"
+            href="tel:193"
+            aria-label="Ligar para o 193, bombeiros"
+            style="min-height: 96px; flex-direction: column; gap: var(--espaco-xs); font-size: 1rem;"
+          >
+            <svg
+              width="34"
+              height="34"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--cor-acao)"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"></path>
+            </svg>
+            Ligar 193
+          </a>
+        </div>
+      </nav>
+    </main>
+  </body>
+</html>

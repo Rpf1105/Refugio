@@ -183,37 +183,37 @@ Stack: FastAPI, Uvicorn, Pydantic, SQLite (via camada de acesso isolada), fotos 
 - [x] 11. Checkpoint — Garantir que os testes de API e sincronização passam
   - Garantir que todos os testes passam; perguntar ao usuário em caso de dúvidas.
 
-- [ ] 12. Implementar o frontend responsivo (Sistema de Design e telas)
-  - [-] 12.1 Implementar o Sistema de Design e base responsiva/acessível
+- [x] 12. Implementar o frontend responsivo (Sistema de Design e telas)
+  - [x] 12.1 Implementar o Sistema de Design e base responsiva/acessível
     - Criar `app/web/static/css/estilo.css` com os tokens (cores `#C9291C`, `#EFEFEC`, `#DEDEDB`, `#F6D9A6`, `#E8A028`, `#9DC48C`; tipografia Helvetica Neue/Arial; botão pílula `border-radius:99px`; card `border-radius:22–28px`; alvo de toque mínimo 44px) e layout fluido de 320px a 1920px; incluir base de acessibilidade (navegação por teclado, foco visível) e mensagem de navegadores compatíveis
     - _Requirements: 10.3, 10.6, 10.7, 10.8, 14.2, 14.3, 14.4, 14.6, 14.7_
-  - [-] 12.2 Implementar as telas Início e Ocorrência
+  - [x] 12.2 Implementar as telas Início e Ocorrência
     - Criar templates/HTML das telas Início (título "Refúgio", card de alerta `#F6D9A6`, botão primário e atalhos) e Ocorrência (exibição de Relato com selo/status/foto/confirmações e formulário com descrição, seletor de gravidade e foto obrigatória), com texto alternativo nos elementos não textuais
     - _Requirements: 4.1, 5.2, 10.6, 14.1, 14.5_
-  - [-] 12.3 Implementar a tela Mapa com Leaflet, cores de gravidade e legenda
+  - [x] 12.3 Implementar a tela Mapa com Leaflet, cores de gravidade e legenda
     - Criar o HTML/JS do Mapa integrando Leaflet + OpenStreetMap: consumir `/api/*`, desenhar Áreas/Abrigos/Relatos/Incidentes/Incidentes_Externos com cores por gravidade, botões-pílula de filtro, card de detalhe, legenda de cores e diferenciação visual de procedência externa; aviso quando tiles não carregarem
     - _Requirements: 1.1, 1.2, 2.1, 2.2, 5.1, 5.2, 5.3, 9.6, 12.1, 12.2, 12.3, 12.4, 12.5, 14.1, 15.3_
-  - [-] 12.4 Implementar a tela Pedir ajuda
+  - [x] 12.4 Implementar a tela Pedir ajuda
     - Criar o HTML/JS da tela Pedir ajuda (título, campo de descrição, localização, botão "Enviar pedido", aviso legal), consumindo `POST /api/pedidos` e exibindo a mensagem de rejeição do Filtro de Conteúdo quando aplicável
     - _Requirements: 11.1, 11.2, 11.5, 11.7, 11.8, 14.1_
   - [ ]* 12.5 Escrever testes de exemplo de conformidade do Sistema de Design
     - Verificar tokens (cores, tipografia, raio de botão 99px, raio de card 22–28px, alvo 44px, nome "Refúgio") e presença das 4 telas e da legenda de cores
     - _Requirements: 12.5, 14.1, 14.2, 14.3, 14.4, 14.5, 14.6_
 
-- [~] 13. Empacotar o protótipo em container Docker
+- [x] 13. Empacotar o protótipo em container Docker
   - Criar o `Dockerfile` (base `python:3.12-slim`, instalar `requirements.txt`, `VOLUME ["/data"]`, `EXPOSE 8000`, `CMD uvicorn app.main:app --host 0.0.0.0 --port 8000`) e um `.dockerignore`
   - Observação: o provisionamento e a execução da Instância EC2 real são operação manual (fora do escopo de tarefas de código); seguir o passo a passo do design para `docker build`/`docker run`
   - _Requirements: 13.1, 13.2, 13.3_
 
-- [ ] 14. Fiação final e testes de integração/smoke
-  - [~] 14.1 Integrar startup, rotas de página e assets estáticos
+- [x] 14. Fiação final e testes de integração/smoke
+  - [x] 14.1 Integrar startup, rotas de página e assets estáticos
     - Garantir que `app/main.py` registra todos os routers da API, serve as 4 páginas (`/`, `/mapa`, `/ocorrencia`, `/pedir-ajuda`), monta `/static` e `/fotos`, inicializa o banco e inicia o agendador quando habilitado
     - _Requirements: 10.1, 10.2, 13.3_
   - [ ]* 14.2 Escrever teste de smoke da aplicação
     - Subir o app via TestClient e verificar que as páginas e endpoints principais respondem com sucesso na porta exposta
     - _Requirements: 13.3_
 
-- [~] 15. Checkpoint final — Garantir que todos os testes passam
+- [x] 15. Checkpoint final — Garantir que todos os testes passam
   - Garantir que todos os testes passam; perguntar ao usuário em caso de dúvidas.
 
 ## Notes

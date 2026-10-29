@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pedir ajuda — Refúgio</title>
+    <!--
+      Tela "Pedir ajuda" do Refúgio (tarefa 12.4).
+
+      Consome POST /api/pedidos para publicar um Pedido de Ajuda (R11.1) e exibe
+      a confirmação de publicação (R11.7). Erros de validação (descrição
+      obrigatória, R11.2) e a rejeição do Filtro de Conteúdo (solicitações de
+      pagamento não permitidas, R11.5) são exibidos na região de mensagens, que
+      usa aria-live para anúncio por leitores de tela. Lista os Pedidos recentes
+      do Município via GET /api/pedidos (R11.8). Segue o Sistema de Design
+      (botões pílula, cards, cores) de estilo.css (R14.1).
+    -->
+    <link rel="stylesheet" href="/static/css/estilo.css" />
+  </head>
+  <body>
+    <!-- Link "pular para o conteúdo" para navegação por teclado (R10.7). -->
+    <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+    <!--
+      Aviso de navegadores compatíveis (R10.8). Começa oculto e é revelado pelo
+      JS caso um recurso necessário (fetch) não esteja disponível.
+    -->
+    <div
+      class="container aviso-navegador"
+      id="aviso-navegador"
+      role="alert"
+      hidden
+    >
+      <h2>Navegador não compatível</h2>
+      <p>
+        Para usar esta página, acesse pela versão estável mais recente de um dos
+        navegadores compatíveis:
+      </p>
+      <ul>
+        <li>Google Chrome</li>
+        <li>Mozilla Firefox</li>
+        <li>Microsoft Edge</li>
+        <li>Safari</li>
+      </ul>
+    </div>
+
+    <main class="container" id="conteudo">
+      <header>
+        <p aria-hidden="true" style="font-weight: 600; color: var(--cor-acao); margin: var(--espaco-lg) 0 var(--espaco-xs);">
+          Refúgio
+        </p>
+        <h1 style="color: var(--cor-acao); font-size: clamp(2rem, 6vw, 2.75rem);">
+          Pedir ajuda
+        </h1>
+        <p style="color: var(--cor-texto-suave);">
+          Em risco de vida, ligue 193 (Bombeiros) ou 199 (Defesa Civil).
+        </p>
+      </header>
+
+      <!--
+        Região de mensagens: confirmação de publicação (R11.7) e mensagens de
+        erro (R11.2/R11.5). aria-live="assertive" garante o anúncio imediato por
+        leitores de tela (R10.6). Começa vazia e oculta.
+      -->
+      <div
+        id="mensagem"
+        class="card"
+        role="status"
+        aria-live="assertive"
+        tabindex="-1"
+        hidden
+      ></div>
+
+      <!-- Formulário do Pedido de Ajuda. -->
+      <form id="form-pedido" class="card" novalidate style="margin-top: var(--espaco-md);">
+        <div style="margin-bottom: var(--espaco-md);">
+          <label class="rotulo" for="descricao">Descreva sua situação</label>
+          <textarea
+            class="campo"
+            id="descricao"
+            name="descricao"
+            rows="4"
+            placeholder="Conte o que está acontecendo e do que você precisa."
+            aria-describedby="descricao-dica"
+            required
+          ></textarea>
+          <p id="descricao-dica" style="color: var(--cor-texto-suave); font-size: 0.9rem; margin-top: var(--espaco-xs);">
+            A descrição é obrigatória.
+          </p>
+        </div>
+
+        <!--
+          Localização opcional. O botão usa navigator.geolocation para preencher
+          lat/lng automaticamente; na ausência de GPS ou permissão, o Pedido é
+          enviado sem localização (os campos são opcionais na API).
+        -->
+        <fieldset style="border: 0; padding: 0; margin: 0 0 var(--espaco-md);">
+          <legend class="rotulo" style="padding: 0;">Localização (opcional)</legend>
+          <p style="color: var(--cor-texto-suave); font-size: 0.9rem; margin-top: 0;">
+            Use o GPS do aparelho para enviar sua localização junto, ou informe
+            manualmente as coordenadas.
+          </p>
+          <button type="button" id="btn-gps" class="botao botao--secundario">
+            Usar minha localização
+          </button>
+          <span
+            id="status-local"
+            aria-live="polite"
+            style="display: block; margin-top: var(--espaco-xs); color: var(--cor-texto-suave); font-size: 0.9rem;"
+          ></span>
+          <div class="grade" style="margin-top: var(--espaco-sm);">
+            <div>
+              <label class="rotulo" for="lat">Latitude</label>
+              <input class="campo" type="number" step="any" id="lat" name="lat" inputmode="decimal" />
+            </div>
+            <div>
+              <label class="rotulo" for="lng">Longitude</label>
+              <input class="campo" type="number" step="any" id="lng" name="lng" inputmode="decimal" />
+            </div>
+          </div>
+        </fieldset>
+
+        <button type="submit" id="btn-enviar" class="botao botao--primario botao--bloco">
+          Enviar pedido
+        </button>
+      </form>
+
+      <!--
+        Aviso legal (R11.5): deixa claro que solicitações de pagamento não são
+        permitidas por motivo de segurança, e que o canal não substitui os
+        serviços oficiais de emergência.
+      -->
+      <section class="alerta" aria-label="Aviso legal" style="margin-top: var(--espaco-md);">
+        <h2 style="font-size: 1.1rem;">Aviso de segurança</h2>
+        <p style="margin-bottom: 0;">
+          Por motivo de segurança, solicitações de pagamento (pix, transferência,
+          boleto, cartão e afins) não são permitidas nos pedidos de ajuda. O app
+          encaminha o pedido aos responsáveis, mas não garante resgate e não
+          substitui os serviços oficiais de emergência.
+        </p>
+      </section>
+
+      <!-- Pedidos de Ajuda recentes do Município (R11.8). -->
+      <section aria-labelledby="titulo-recentes" style="margin: var(--espaco-xl) 0;">
+        <h2 id="titulo-recentes">Pedidos recentes</h2>
+        <p id="recentes-vazio" style="color: var(--cor-texto-suave);" hidden>
+          Nenhum pedido de ajuda publicado ainda.
+        </p>
+        <ul
+          id="lista-recentes"
+          style="list-style: none; margin: 0; padding: 0; display: grid; gap: var(--espaco-md);"
+        ></ul>
+      </section>
+    </main>
+
+    <script src="/static/js/pedir-ajuda.js" defer></script>
+  </body>
+</html>

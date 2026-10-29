@@ -436,6 +436,11 @@
         "executionId": "7d1cc675-b24f-4e50-b80f-a096e3e2dd8d",
         "chatSessionId": "sess_fadfacd4-ea1e-4aa4-bdaf-208c2d21abcd",
         "timestamp": 1793302179237
+      },
+      {
+        "executionId": "7d1cc675-b24f-4e50-b80f-a096e3e2dd8d",
+        "chatSessionId": "sess_fadfacd4-ea1e-4aa4-bdaf-208c2d21abcd",
+        "timestamp": 1793302624646
       }
     ],
     "12.2 Implementar as telas Início e Ocorrência": [
@@ -448,6 +453,11 @@
         "executionId": "7d1cc675-b24f-4e50-b80f-a096e3e2dd8d",
         "chatSessionId": "sess_fadfacd4-ea1e-4aa4-bdaf-208c2d21abcd",
         "timestamp": 1793302313789
+      },
+      {
+        "executionId": "7d1cc675-b24f-4e50-b80f-a096e3e2dd8d",
+        "chatSessionId": "sess_fadfacd4-ea1e-4aa4-bdaf-208c2d21abcd",
+        "timestamp": 1793302625434
       }
     ],
     "12.3 Implementar a tela Mapa com Leaflet, cores de gravidade e legenda": [
@@ -460,6 +470,11 @@
         "executionId": "7d1cc675-b24f-4e50-b80f-a096e3e2dd8d",
         "chatSessionId": "sess_fadfacd4-ea1e-4aa4-bdaf-208c2d21abcd",
         "timestamp": 1793302312271
+      },
+      {
+        "executionId": "7d1cc675-b24f-4e50-b80f-a096e3e2dd8d",
+        "chatSessionId": "sess_fadfacd4-ea1e-4aa4-bdaf-208c2d21abcd",
+        "timestamp": 1793302621873
       }
     ],
     "12.4 Implementar a tela Pedir ajuda": [
@@ -472,6 +487,11 @@
         "executionId": "7d1cc675-b24f-4e50-b80f-a096e3e2dd8d",
         "chatSessionId": "sess_fadfacd4-ea1e-4aa4-bdaf-208c2d21abcd",
         "timestamp": 1793302314526
+      },
+      {
+        "executionId": "7d1cc675-b24f-4e50-b80f-a096e3e2dd8d",
+        "chatSessionId": "sess_fadfacd4-ea1e-4aa4-bdaf-208c2d21abcd",
+        "timestamp": 1793302623288
       }
     ],
     "13. Empacotar o protótipo em container Docker": [
@@ -479,6 +499,16 @@
         "executionId": "800795b6-0afc-450c-bc7b-c6979b3c690b",
         "chatSessionId": "sess_abbd0f90-4361-4b3a-a5e6-0996f7ef1d5c",
         "timestamp": 1793299646010
+      },
+      {
+        "executionId": "7d1cc675-b24f-4e50-b80f-a096e3e2dd8d",
+        "chatSessionId": "sess_fadfacd4-ea1e-4aa4-bdaf-208c2d21abcd",
+        "timestamp": 1793302632593
+      },
+      {
+        "executionId": "7d1cc675-b24f-4e50-b80f-a096e3e2dd8d",
+        "chatSessionId": "sess_fadfacd4-ea1e-4aa4-bdaf-208c2d21abcd",
+        "timestamp": 1793302789727
       }
     ],
     "14.1 Integrar startup, rotas de página e assets estáticos": [
@@ -486,6 +516,16 @@
         "executionId": "800795b6-0afc-450c-bc7b-c6979b3c690b",
         "chatSessionId": "sess_abbd0f90-4361-4b3a-a5e6-0996f7ef1d5c",
         "timestamp": 1793299646143
+      },
+      {
+        "executionId": "7d1cc675-b24f-4e50-b80f-a096e3e2dd8d",
+        "chatSessionId": "sess_fadfacd4-ea1e-4aa4-bdaf-208c2d21abcd",
+        "timestamp": 1793302632940
+      },
+      {
+        "executionId": "7d1cc675-b24f-4e50-b80f-a096e3e2dd8d",
+        "chatSessionId": "sess_fadfacd4-ea1e-4aa4-bdaf-208c2d21abcd",
+        "timestamp": 1793302791266
       }
     ],
     "15. Checkpoint final — Garantir que todos os testes passam": [
@@ -493,6 +533,16 @@
         "executionId": "800795b6-0afc-450c-bc7b-c6979b3c690b",
         "chatSessionId": "sess_abbd0f90-4361-4b3a-a5e6-0996f7ef1d5c",
         "timestamp": 1793299646299
+      },
+      {
+        "executionId": "7d1cc675-b24f-4e50-b80f-a096e3e2dd8d",
+        "chatSessionId": "sess_fadfacd4-ea1e-4aa4-bdaf-208c2d21abcd",
+        "timestamp": 1793302798886
+      },
+      {
+        "executionId": "7d1cc675-b24f-4e50-b80f-a096e3e2dd8d",
+        "chatSessionId": "sess_fadfacd4-ea1e-4aa4-bdaf-208c2d21abcd",
+        "timestamp": 1793303033952
       }
     ],
     "2. Implementar a camada de dados (SQLite) e o schema": [
@@ -542,6 +592,20 @@
         "executionId": "7d1cc675-b24f-4e50-b80f-a096e3e2dd8d",
         "chatSessionId": "sess_fadfacd4-ea1e-4aa4-bdaf-208c2d21abcd",
         "timestamp": 1793302054605
+      }
+    ],
+    "12. Implementar o frontend responsivo (Sistema de Design e telas)": [
+      {
+        "executionId": "7d1cc675-b24f-4e50-b80f-a096e3e2dd8d",
+        "chatSessionId": "sess_fadfacd4-ea1e-4aa4-bdaf-208c2d21abcd",
+        "timestamp": 1793302625554
+      }
+    ],
+    "14. Fiação final e testes de integração/smoke": [
+      {
+        "executionId": "7d1cc675-b24f-4e50-b80f-a096e3e2dd8d",
+        "chatSessionId": "sess_fadfacd4-ea1e-4aa4-bdaf-208c2d21abcd",
+        "timestamp": 1793302791836
       }
     ]
   }

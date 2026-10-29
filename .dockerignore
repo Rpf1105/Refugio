@@ -1,0 +1,56 @@
+# Cache e artefatos de bytecode do Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+
+# Controle de versão e metadados do repositório
+.git/
+.gitignore
+.gitattributes
+
+# Arquivos do Kiro / specs (não entram na imagem)
+.kiro/
+
+# Testes (não precisam ir para a imagem de execução)
+tests/
+
+# Dados locais persistentes (ficam no volume /data, não na imagem)
+data/
+*.db
+*.sqlite
+*.sqlite3
+fotos/
+
+# Ambientes virtuais locais
+.venv/
+venv/
+env/
+ENV/
+
+# Configuração local de ambiente
+.env
+.env.*
+
+# Arquivos de editores/IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Metadados de sistema operacional
+.DS_Store
+Thumbs.db
+
+# Artefatos e arquivos descartáveis / temporários
+*.zip
+*.log
+*.tmp
+*.bak
+scratch/
+tmp/
+paginas/
